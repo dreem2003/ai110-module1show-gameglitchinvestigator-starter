@@ -1,5 +1,5 @@
 import random
-import streamlit as st
+import streamlit as st #type: ignore
 
 def get_range_for_difficulty(difficulty: str):
     if difficulty == "Easy":
@@ -34,17 +34,17 @@ def check_guess(guess, secret):
         return "Win", "🎉 Correct!"
 
     try:
-        if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
+        if guess < secret:
+            return "Too Low", "📈 Go HIGHER!"
         else:
-            return "Too Low", "📉 Go LOWER!"
+            return "Too High", "📉 Go LOWER!"
     except TypeError:
         g = str(guess)
         if g == secret:
             return "Win", "🎉 Correct!"
-        if g > secret:
-            return "Too High", "📈 Go HIGHER!"
-        return "Too Low", "📉 Go LOWER!"
+        if g < secret:
+            return "Too Low", "📈 Go HIGHER!"
+        return "Too High", "📉 Go LOWER!"
 
 
 def update_score(current_score: int, outcome: str, attempt_number: int):
@@ -107,8 +107,8 @@ if "history" not in st.session_state:
 st.subheader("Make a guess")
 
 st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
+    f"Guess a number between {low} and {high}."
+    f" Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
 with st.expander("Developer Debug Info"):
@@ -133,7 +133,8 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.status = "playing"
     st.success("New game started.")
     st.rerun()
 
